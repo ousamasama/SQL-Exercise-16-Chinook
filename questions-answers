@@ -49,15 +49,36 @@ SELECT COUNT(*) FROM InvoiceLine WHERE InvoiceLineId = 37
 
 11. line_items_per_invoice.sql: Looking at the InvoiceLine table, provide a query that COUNTs the number of line items for each Invoice. HINT: GROUP BY
 
+SELECT COUNT(*) FROM InvoiceLine GROUP BY InvoiceId
+
 12. line_item_track.sql: Provide a query that includes the purchased track name with each invoice line item.
+
+SELECT InvoiceId, Track.Name FROM InvoiceLine
+JOIN Track ON Track.TrackId = InvoiceLine.TrackId
 
 13. line_item_track_artist.sql: Provide a query that includes the purchased track name AND artist name with each invoice line item.
 
+SELECT InvoiceId, Track.Name, Artist.Name FROM InvoiceLine
+JOIN Track ON Track.TrackId = InvoiceLine.TrackId
+JOIN Album ON Album.AlbumId = Track.AlbumId
+JOIN Artist ON Album.ArtistId = Artist.ArtistId
+
 14. country_invoices.sql: Provide a query that shows the # of invoices per country. HINT: GROUP BY
+
+SELECT BillingCountry, COUNT(*) FROM Invoice GROUP BY BillingCountry
 
 15. playlists_track_count.sql: Provide a query that shows the total number of tracks in each playlist. The Playlist name should be include on the resulant table.
 
+SELECT Playlist.Name, COUNT(*) FROM PlaylistTrack
+JOIN Playlist ON Playlist.PlaylistId = PlaylistTrack.PlaylistId
+GROUP BY Playlist.Name
+
 16. tracks_no_id.sql: Provide a query that shows all the Tracks, but displays no IDs. The result should include the Album name, Media type and Genre.
+
+SELECT Track.Name as "Track Name" , Album.Title as "Album Title", Genre.Name as "Genre", MediaType.Name as "Media Type" FROM Track
+JOIN Genre ON Track.GenreId = Genre.GenreId
+JOIN Album ON Track.AlbumId = Album.AlbumId
+JOIN MediaType ON MediaType.MediaTypeId = Track.MediaTypeId
 
 17. invoices_line_item_count.sql: Provide a query that shows all Invoices but includes the # of invoice line items.
 
