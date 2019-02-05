@@ -82,23 +82,76 @@ JOIN MediaType ON MediaType.MediaTypeId = Track.MediaTypeId
 
 17. invoices_line_item_count.sql: Provide a query that shows all Invoices but includes the # of invoice line items.
 
+SELECT Invoice.InvoiceId, COUNT(*) FROM InvoiceLine
+JOIN Invoice ON Invoice.InvoiceId = InvoiceLine.InvoiceId
+GROUP BY Invoice.InvoiceId
+
 18. sales_agent_total_sales.sql: Provide a query that shows total sales made by each sales agent.
+
+SELECT Employee.FirstName, Employee.LastName, SUM(Total) FROM Invoice
+JOIN Customer ON Invoice.CustomerId = Customer.CustomerId
+JOIN Employee ON Customer.SupportRepId = Employee.EmployeeId
+GROUP BY Employee.EmployeeId
 
 19. top_2009_agent.sql: Which sales agent made the most in sales in 2009?
 
 Hint: Use the MAX function on a subquery.
 
+SELECT "First Name", "Last Name", MAX("Total") FROM (
+SELECT Employee.FirstName as "First Name", Employee.LastName as "Last Name", SUM(Total) as "Total" FROM Invoice
+JOIN Customer ON Invoice.CustomerId = Customer.CustomerId
+JOIN Employee ON Customer.SupportRepId = Employee.EmployeeId
+WHERE Invoice.InvoiceDate BETWEEN "2009-01-01 00:00:00" AND "2009-12-26 00:00:00"
+GROUP BY Employee.EmployeeId );
+
 20. top_agent.sql: Which sales agent made the most in sales over all?
+
+SELECT "First Name", "Last Name", MAX("Total") FROM (
+SELECT Employee.FirstName as "First Name", Employee.LastName as "Last Name", SUM(Total) as "Total" FROM Invoice
+JOIN Customer ON Invoice.CustomerId = Customer.CustomerId
+JOIN Employee ON Customer.SupportRepId = Employee.EmployeeId
+GROUP BY Employee.EmployeeId );
 
 21. sales_agent_customer_count.sql: Provide a query that shows the count of customers assigned to each sales agent.
 
+SELECT Employee.FirstName, Employee.LastName, COUNT(*) FROM Customer
+JOIN Employee ON Customer.SupportRepId = Employee.EmployeeId
+GROUP BY Employee.EmployeeId
+
 22. sales_per_country.sql: Provide a query that shows the total sales per country.
+
+SELECT BillingCountry, SUM(Total) FROM Invoice
+GROUP BY Invoice.BillingCountry
 
 23. top_country.sql: Which country's customers spent the most?
 
+SELECT "Country", MAX("Total") FROM (
+SELECT BillingCountry as "Country", SUM(Total) as "Total" FROM Invoice
+GROUP BY Invoice.BillingCountry )
+
+OR
+
+SELECT BillingCountry, SUM(Total) as "Total" FROM Invoice
+GROUP BY Invoice.BillingCountry
+ORDER BY "Total" DESC
+
 24. top_2013_track.sql: Provide a query that shows the most purchased track of 2013.
 
+SELECT "Track Name", MAX("Total") FROM (
+SELECT Track.Name as "Track Name", COUNT(*) as "Total" FROM Invoice
+JOIN InvoiceLine ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+JOIN Track ON InvoiceLine.TrackId = Track.TrackId
+WHERE Invoice.InvoiceDate BETWEEN "2013-01-02 00:00:00" AND "2013-12-22 00:00:00"
+GROUP BY Track.Name
+)
+
 25. top_5_tracks.sql: Provide a query that shows the top 5 most purchased tracks over all.
+
+SELECT Track.Name, COUNT(*) as "Total" FROM Invoice
+JOIN InvoiceLine ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+JOIN Track ON InvoiceLine.TrackId = Track.TrackId
+GROUP BY Track.Name
+ORDER BY "Total" DESC LIMIT 5
 
 26. top_3_artists.sql: Provide a query that shows the top 3 best selling artists.
 
